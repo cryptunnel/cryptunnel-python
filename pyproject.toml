@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cryptunnel"
+version = "1.0.0"
+description = "Python SDK for Cryptunnel - accept crypto payments straight to your own wallets"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Cryptunnel" }]
+keywords = ["cryptunnel", "crypto", "payments", "usdt", "tron", "bitcoin", "ethereum"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Financial",
+]
+dependencies = ["httpx>=0.27"]
+
+[project.urls]
+Homepage = "https://cryptunnel.io"
+Documentation = "https://docs.cryptunnel.io"
+Issues = "https://github.com/cryptunnel/cryptunnel-python/issues"
+Source = "https://github.com/cryptunnel/cryptunnel-python"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cryptunnel"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
