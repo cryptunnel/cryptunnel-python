@@ -1,5 +1,7 @@
 # cryptunnel
 
+[![Test](https://github.com/cryptunnel/cryptunnel-python/actions/workflows/test.yml/badge.svg)](https://github.com/cryptunnel/cryptunnel-python/actions/workflows/test.yml) [![PyPI](https://img.shields.io/pypi/v/cryptunnel)](https://pypi.org/project/cryptunnel/) [![Python](https://img.shields.io/pypi/pyversions/cryptunnel)](https://pypi.org/project/cryptunnel/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Python SDK for [Cryptunnel](https://cryptunnel.io) - accept crypto payments straight into your own
 wallets. Async-first for bots on aiogram, with a blocking mirror for scripts.
 
