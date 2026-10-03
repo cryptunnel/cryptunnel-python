@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 import httpx
 import pytest
 
@@ -11,6 +13,7 @@ from cryptunnel import (
     NotFoundError,
     RateLimitError,
     ValidationError,
+    user_agent,
 )
 
 
@@ -115,6 +118,21 @@ async def test_the_async_client_maps_errors_the_same_way():
 
     assert raised.value.code == "INVALID_CREDENTIALS"
     await cryptunnel.close()
+
+
+def test_requests_carry_the_sdk_user_agent():
+    cryptunnel, seen = client_returning(200, {})
+
+    cryptunnel.get_merchant()
+
+    assert re.fullmatch(r"cryptunnel-python/\d+\.\d+\.\d+\S* python/\S+ httpx/\S+ \(\S+ \S+\)", seen[0].headers["user-agent"])
+
+
+def test_the_app_name_is_appended_to_the_user_agent():
+    cryptunnel = CryptunnelSync("merchant-id", "ct_live_key", app="my-shop/2.0")
+
+    assert cryptunnel._options["headers"]["User-Agent"].endswith(" my-shop/2.0")
+    assert user_agent("x/1").startswith("cryptunnel-python/")
 
 
 def test_base_url_is_honoured():

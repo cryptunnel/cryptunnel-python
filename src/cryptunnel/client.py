@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import asyncio
+import platform
 import time
+from importlib.metadata import PackageNotFoundError, version
 from typing import Any, Mapping
 
 import httpx
 
+from ._version import __version__
 from .errors import ApiError, PaymentTimeoutError, RateLimitError, error_from_response
 
 DEFAULT_BASE_URL = "https://api.cryptunnel.io"
@@ -15,6 +18,19 @@ DEFAULT_TIMEOUT = 30.0
 
 #: Statuses a payment never leaves.
 TERMINAL_STATUSES = frozenset({"confirmed", "confirmed_manual", "failed", "expired"})
+
+
+def user_agent(app: str | None = None) -> str:
+    """The User-Agent every request carries: package, runtime and platform, plus your ``app`` if given.
+
+    Cryptunnel uses it to see which SDK versions merchants integrate with. Nothing identifying is
+    included - no hostname, no paths.
+    """
+    base = (
+        f"cryptunnel-python/{__version__} python/{platform.python_version()} "
+        f"httpx/{_httpx_version()} ({platform.system()} {platform.machine()})"
+    )
+    return f"{base} {app}" if app else base
 
 
 class _BaseClient:
@@ -31,13 +47,18 @@ class _BaseClient:
         sandbox: bool = False,
         base_url: str = DEFAULT_BASE_URL,
         timeout: float = DEFAULT_TIMEOUT,
+        app: str | None = None,
     ) -> None:
         self.merchant_id = merchant_id
         self.sandbox = sandbox
         self.base_url = base_url.rstrip("/")
         self._options: dict[str, Any] = {
             "base_url": self.base_url,
-            "headers": {"x-merchant-id": merchant_id, "x-api-key": api_key},
+            "headers": {
+                "x-merchant-id": merchant_id,
+                "x-api-key": api_key,
+                "User-Agent": user_agent(app),
+            },
             "timeout": timeout,
         }
 
@@ -249,6 +270,14 @@ class _Waiter:
         delay = self.delay if retry_after is None else retry_after
         self.delay = min(self.delay * 2, self.max_delay)
         return max(0.0, min(delay, self.deadline - time.monotonic()))
+
+
+def _httpx_version() -> str:
+    # httpx 0.28 dropped httpx.__version__, the package metadata is the stable source
+    try:
+        return version("httpx")
+    except PackageNotFoundError:
+        return "unknown"
 
 
 def _retry_after(headers: Mapping[str, Any]) -> float | None:

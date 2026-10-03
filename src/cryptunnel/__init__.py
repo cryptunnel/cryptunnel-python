@@ -9,7 +9,8 @@ print(payment["url"])
 ```
 """
 
-from .client import DEFAULT_BASE_URL, TERMINAL_STATUSES, Cryptunnel, CryptunnelSync
+from ._version import __version__
+from .client import DEFAULT_BASE_URL, TERMINAL_STATUSES, Cryptunnel, CryptunnelSync, user_agent
 from .errors import (
     ApiError,
     AuthenticationError,
@@ -33,6 +34,6 @@ __all__ = [
     "PaymentTimeoutError",
     "RateLimitError",
     "ValidationError",
+    "user_agent",
     "verify_webhook",
 ]
-__version__ = "1.0.0"

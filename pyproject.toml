@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cryptunnel"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Python SDK for Cryptunnel - accept crypto payments straight to your own wallets"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,6 +31,9 @@ Source = "https://github.com/cryptunnel/cryptunnel-python"
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[tool.hatch.version]
+path = "src/cryptunnel/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cryptunnel"]
